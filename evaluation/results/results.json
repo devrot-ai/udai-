@@ -1,0 +1,1283 @@
+{
+  "summary": {
+    "documents": 24,
+    "doc_type_detection_accuracy": 1.0,
+    "hybrid": {
+      "correct": 150,
+      "total": 150,
+      "accuracy": 1.0,
+      "per_type": {
+        "invoice": {
+          "correct": 48,
+          "total": 48,
+          "accuracy": 1.0
+        },
+        "contract": {
+          "correct": 36,
+          "total": 36,
+          "accuracy": 1.0
+        },
+        "financial_statement": {
+          "correct": 42,
+          "total": 42,
+          "accuracy": 1.0
+        },
+        "court_document": {
+          "correct": 24,
+          "total": 24,
+          "accuracy": 1.0
+        }
+      }
+    },
+    "baseline": {
+      "system": "naive-regex (spaCy not installed)",
+      "correct": 74,
+      "total": 150,
+      "accuracy": 0.4933,
+      "per_type": {
+        "invoice": {
+          "correct": 12,
+          "total": 48,
+          "accuracy": 0.25
+        },
+        "contract": {
+          "correct": 12,
+          "total": 36,
+          "accuracy": 0.3333
+        },
+        "financial_statement": {
+          "correct": 42,
+          "total": 42,
+          "accuracy": 1.0
+        },
+        "court_document": {
+          "correct": 8,
+          "total": 24,
+          "accuracy": 0.3333
+        }
+      }
+    },
+    "improvement_pp": 50.7,
+    "elapsed_seconds": 1.0
+  },
+  "per_document": [
+    {
+      "id": "invoice_00",
+      "doc_type": "invoice",
+      "detected_type": "invoice",
+      "fields": {
+        "invoice_number": {
+          "expected": "INV-2024-100",
+          "hybrid": "INV-2024-100",
+          "hybrid_correct": true,
+          "baseline": "Northwind Consulting LLC",
+          "baseline_correct": false
+        },
+        "invoice_date": {
+          "expected": "January 3, 2024",
+          "hybrid": "January 3, 2024",
+          "hybrid_correct": true,
+          "baseline": "January 3, 2024",
+          "baseline_correct": true
+        },
+        "due_date": {
+          "expected": "February 3, 2024",
+          "hybrid": "February 3, 2024",
+          "hybrid_correct": true,
+          "baseline": "February 3, 2024",
+          "baseline_correct": true
+        },
+        "client_name": {
+          "expected": "Acme Manufacturing Inc.",
+          "hybrid": "Acme Manufacturing Inc",
+          "hybrid_correct": true,
+          "baseline": "INVOICE",
+          "baseline_correct": false
+        },
+        "subtotal": {
+          "expected": "$3,200.00",
+          "hybrid": "$3,200.00",
+          "hybrid_correct": true,
+          "baseline": "$150.00",
+          "baseline_correct": false
+        },
+        "tax": {
+          "expected": "$256.00",
+          "hybrid": "$256.00",
+          "hybrid_correct": true,
+          "baseline": "$1,500.00",
+          "baseline_correct": false
+        },
+        "total_amount": {
+          "expected": "$3,456.00",
+          "hybrid": "$3,456.00",
+          "hybrid_correct": true,
+          "baseline": "$200.00",
+          "baseline_correct": false
+        },
+        "payment_terms": {
+          "expected": "Net 30",
+          "hybrid": "Net 30",
+          "hybrid_correct": true,
+          "baseline": "Acme Manufacturing Inc.",
+          "baseline_correct": false
+        }
+      }
+    },
+    {
+      "id": "invoice_01",
+      "doc_type": "invoice",
+      "detected_type": "invoice",
+      "fields": {
+        "invoice_number": {
+          "expected": "INV-2024-107",
+          "hybrid": "INV-2024-107",
+          "hybrid_correct": true,
+          "baseline": "Meridian Software Corp.",
+          "baseline_correct": false
+        },
+        "invoice_date": {
+          "expected": "February 4, 2024",
+          "hybrid": "February 4, 2024",
+          "hybrid_correct": true,
+          "baseline": "February 4, 2024",
+          "baseline_correct": true
+        },
+        "due_date": {
+          "expected": "March 4, 2024",
+          "hybrid": "March 4, 2024",
+          "hybrid_correct": true,
+          "baseline": "March 4, 2024",
+          "baseline_correct": true
+        },
+        "client_name": {
+          "expected": "Atlas Logistics LLC",
+          "hybrid": "Atlas Logistics LLC",
+          "hybrid_correct": true,
+          "baseline": "INVOICE",
+          "baseline_correct": false
+        },
+        "subtotal": {
+          "expected": "$3,710.00",
+          "hybrid": "$3,710.00",
+          "hybrid_correct": true,
+          "baseline": "$160.00",
+          "baseline_correct": false
+        },
+        "tax": {
+          "expected": "$296.80",
+          "hybrid": "$296.80",
+          "hybrid_correct": true,
+          "baseline": "$1,760.00",
+          "baseline_correct": false
+        },
+        "total_amount": {
+          "expected": "$4,006.80",
+          "hybrid": "$4,006.80",
+          "hybrid_correct": true,
+          "baseline": "$200.00",
+          "baseline_correct": false
+        },
+        "payment_terms": {
+          "expected": "Net 15",
+          "hybrid": "Net 15",
+          "hybrid_correct": true,
+          "baseline": "Atlas Logistics LLC",
+          "baseline_correct": false
+        }
+      }
+    },
+    {
+      "id": "invoice_02",
+      "doc_type": "invoice",
+      "detected_type": "invoice",
+      "fields": {
+        "invoice_number": {
+          "expected": "INV-2024-114",
+          "hybrid": "INV-2024-114",
+          "hybrid_correct": true,
+          "baseline": "Blue Harbor Analytics Inc.",
+          "baseline_correct": false
+        },
+        "invoice_date": {
+          "expected": "March 5, 2024",
+          "hybrid": "March 5, 2024",
+          "hybrid_correct": true,
+          "baseline": "March 5, 2024",
+          "baseline_correct": true
+        },
+        "due_date": {
+          "expected": "April 5, 2024",
+          "hybrid": "April 5, 2024",
+          "hybrid_correct": true,
+          "baseline": "April 5, 2024",
+          "baseline_correct": true
+        },
+        "client_name": {
+          "expected": "Pinnacle Healthcare Group",
+          "hybrid": "Pinnacle Healthcare Group",
+          "hybrid_correct": true,
+          "baseline": "INVOICE",
+          "baseline_correct": false
+        },
+        "subtotal": {
+          "expected": "$4,240.00",
+          "hybrid": "$4,240.00",
+          "hybrid_correct": true,
+          "baseline": "$170.00",
+          "baseline_correct": false
+        },
+        "tax": {
+          "expected": "$339.20",
+          "hybrid": "$339.20",
+          "hybrid_correct": true,
+          "baseline": "$2,040.00",
+          "baseline_correct": false
+        },
+        "total_amount": {
+          "expected": "$4,579.20",
+          "hybrid": "$4,579.20",
+          "hybrid_correct": true,
+          "baseline": "$200.00",
+          "baseline_correct": false
+        },
+        "payment_terms": {
+          "expected": "Net 45",
+          "hybrid": "Net 45",
+          "hybrid_correct": true,
+          "baseline": "Pinnacle Healthcare Group",
+          "baseline_correct": false
+        }
+      }
+    },
+    {
+      "id": "invoice_03",
+      "doc_type": "invoice",
+      "detected_type": "invoice",
+      "fields": {
+        "invoice_number": {
+          "expected": "INV-2024-121",
+          "hybrid": "INV-2024-121",
+          "hybrid_correct": true,
+          "baseline": "Cascade Legal Services LLP",
+          "baseline_correct": false
+        },
+        "invoice_date": {
+          "expected": "April 6, 2024",
+          "hybrid": "April 6, 2024",
+          "hybrid_correct": true,
+          "baseline": "April 6, 2024",
+          "baseline_correct": true
+        },
+        "due_date": {
+          "expected": "May 6, 2024",
+          "hybrid": "May 6, 2024",
+          "hybrid_correct": true,
+          "baseline": "May 6, 2024",
+          "baseline_correct": true
+        },
+        "client_name": {
+          "expected": "Redwood Retail Corp.",
+          "hybrid": "Redwood Retail Corp",
+          "hybrid_correct": true,
+          "baseline": "INVOICE",
+          "baseline_correct": false
+        },
+        "subtotal": {
+          "expected": "$4,790.00",
+          "hybrid": "$4,790.00",
+          "hybrid_correct": true,
+          "baseline": "$180.00",
+          "baseline_correct": false
+        },
+        "tax": {
+          "expected": "$383.20",
+          "hybrid": "$383.20",
+          "hybrid_correct": true,
+          "baseline": "$2,340.00",
+          "baseline_correct": false
+        },
+        "total_amount": {
+          "expected": "$5,173.20",
+          "hybrid": "$5,173.20",
+          "hybrid_correct": true,
+          "baseline": "$200.00",
+          "baseline_correct": false
+        },
+        "payment_terms": {
+          "expected": "Due on receipt",
+          "hybrid": "Due on receipt",
+          "hybrid_correct": true,
+          "baseline": "Redwood Retail Corp.",
+          "baseline_correct": false
+        }
+      }
+    },
+    {
+      "id": "invoice_04",
+      "doc_type": "invoice",
+      "detected_type": "invoice",
+      "fields": {
+        "invoice_number": {
+          "expected": "INV-2024-128",
+          "hybrid": "INV-2024-128",
+          "hybrid_correct": true,
+          "baseline": "Ironwood Capital Partners",
+          "baseline_correct": false
+        },
+        "invoice_date": {
+          "expected": "May 7, 2024",
+          "hybrid": "May 7, 2024",
+          "hybrid_correct": true,
+          "baseline": "May 7, 2024",
+          "baseline_correct": true
+        },
+        "due_date": {
+          "expected": "June 7, 2024",
+          "hybrid": "June 7, 2024",
+          "hybrid_correct": true,
+          "baseline": "June 7, 2024",
+          "baseline_correct": true
+        },
+        "client_name": {
+          "expected": "Lakeside Energy Company",
+          "hybrid": "Lakeside Energy Company",
+          "hybrid_correct": true,
+          "baseline": "INVOICE",
+          "baseline_correct": false
+        },
+        "subtotal": {
+          "expected": "$5,360.00",
+          "hybrid": "$5,360.00",
+          "hybrid_correct": true,
+          "baseline": "$190.00",
+          "baseline_correct": false
+        },
+        "tax": {
+          "expected": "$428.80",
+          "hybrid": "$428.80",
+          "hybrid_correct": true,
+          "baseline": "$2,660.00",
+          "baseline_correct": false
+        },
+        "total_amount": {
+          "expected": "$5,788.80",
+          "hybrid": "$5,788.80",
+          "hybrid_correct": true,
+          "baseline": "$200.00",
+          "baseline_correct": false
+        },
+        "payment_terms": {
+          "expected": "Net 30",
+          "hybrid": "Net 30",
+          "hybrid_correct": true,
+          "baseline": "Lakeside Energy Company",
+          "baseline_correct": false
+        }
+      }
+    },
+    {
+      "id": "invoice_05",
+      "doc_type": "invoice",
+      "detected_type": "invoice",
+      "fields": {
+        "invoice_number": {
+          "expected": "INV-2024-135",
+          "hybrid": "INV-2024-135",
+          "hybrid_correct": true,
+          "baseline": "Summit Ridge Technologies",
+          "baseline_correct": false
+        },
+        "invoice_date": {
+          "expected": "June 8, 2024",
+          "hybrid": "June 8, 2024",
+          "hybrid_correct": true,
+          "baseline": "June 8, 2024",
+          "baseline_correct": true
+        },
+        "due_date": {
+          "expected": "July 8, 2024",
+          "hybrid": "July 8, 2024",
+          "hybrid_correct": true,
+          "baseline": "July 8, 2024",
+          "baseline_correct": true
+        },
+        "client_name": {
+          "expected": "Falcon Media Holdings",
+          "hybrid": "Falcon Media Holdings",
+          "hybrid_correct": true,
+          "baseline": "INVOICE",
+          "baseline_correct": false
+        },
+        "subtotal": {
+          "expected": "$5,950.00",
+          "hybrid": "$5,950.00",
+          "hybrid_correct": true,
+          "baseline": "$200.00",
+          "baseline_correct": false
+        },
+        "tax": {
+          "expected": "$476.00",
+          "hybrid": "$476.00",
+          "hybrid_correct": true,
+          "baseline": "$3,000.00",
+          "baseline_correct": false
+        },
+        "total_amount": {
+          "expected": "$6,426.00",
+          "hybrid": "$6,426.00",
+          "hybrid_correct": true,
+          "baseline": "$200.00",
+          "baseline_correct": false
+        },
+        "payment_terms": {
+          "expected": "Net 15",
+          "hybrid": "Net 15",
+          "hybrid_correct": true,
+          "baseline": "Falcon Media Holdings",
+          "baseline_correct": false
+        }
+      }
+    },
+    {
+      "id": "contract_00",
+      "doc_type": "contract",
+      "detected_type": "contract",
+      "fields": {
+        "party_1": {
+          "expected": "Meridian Software Corp.",
+          "hybrid": "Meridian Software Corp",
+          "hybrid_correct": true,
+          "baseline": "PROFESSIONAL SERVICES AGREEMENT",
+          "baseline_correct": false
+        },
+        "party_2": {
+          "expected": "Pinnacle Healthcare Group",
+          "hybrid": "Pinnacle Healthcare Group",
+          "hybrid_correct": true,
+          "baseline": "RECITALS",
+          "baseline_correct": false
+        },
+        "effective_date": {
+          "expected": "January 1, 2024",
+          "hybrid": "January 1, 2024",
+          "hybrid_correct": true,
+          "baseline": "January 1, 2024",
+          "baseline_correct": true
+        },
+        "governing_law": {
+          "expected": "Delaware",
+          "hybrid": "Delaware",
+          "hybrid_correct": true,
+          "baseline": "Provider's breach of its obligations under this Agreement.",
+          "baseline_correct": false
+        },
+        "contract_value": {
+          "expected": "$48,000.00",
+          "hybrid": "$48,000.00",
+          "hybrid_correct": true,
+          "baseline": "$48,000.00",
+          "baseline_correct": true
+        },
+        "payment_terms": {
+          "expected": "Net 45",
+          "hybrid": "Net 45",
+          "hybrid_correct": true,
+          "baseline": "Meridian Software Corp. Pinnacle Healthcare Group",
+          "baseline_correct": false
+        }
+      }
+    },
+    {
+      "id": "contract_01",
+      "doc_type": "contract",
+      "detected_type": "contract",
+      "fields": {
+        "party_1": {
+          "expected": "Blue Harbor Analytics Inc.",
+          "hybrid": "Blue Harbor Analytics Inc",
+          "hybrid_correct": true,
+          "baseline": "PROFESSIONAL SERVICES AGREEMENT",
+          "baseline_correct": false
+        },
+        "party_2": {
+          "expected": "Redwood Retail Corp.",
+          "hybrid": "Redwood Retail Corp",
+          "hybrid_correct": true,
+          "baseline": "RECITALS",
+          "baseline_correct": false
+        },
+        "effective_date": {
+          "expected": "February 1, 2024",
+          "hybrid": "February 1, 2024",
+          "hybrid_correct": true,
+          "baseline": "February 1, 2024",
+          "baseline_correct": true
+        },
+        "governing_law": {
+          "expected": "New York",
+          "hybrid": "New York",
+          "hybrid_correct": true,
+          "baseline": "Provider's breach of its obligations under this Agreement.",
+          "baseline_correct": false
+        },
+        "contract_value": {
+          "expected": "$60,500.00",
+          "hybrid": "$60,500.00",
+          "hybrid_correct": true,
+          "baseline": "$60,500.00",
+          "baseline_correct": true
+        },
+        "payment_terms": {
+          "expected": "Net 30",
+          "hybrid": "Net 30",
+          "hybrid_correct": true,
+          "baseline": "Blue Harbor Analytics Inc. Redwood Retail Corp.",
+          "baseline_correct": false
+        }
+      }
+    },
+    {
+      "id": "contract_02",
+      "doc_type": "contract",
+      "detected_type": "contract",
+      "fields": {
+        "party_1": {
+          "expected": "Cascade Legal Services LLP",
+          "hybrid": "Cascade Legal Services LLP",
+          "hybrid_correct": true,
+          "baseline": "PROFESSIONAL SERVICES AGREEMENT",
+          "baseline_correct": false
+        },
+        "party_2": {
+          "expected": "Lakeside Energy Company",
+          "hybrid": "Lakeside Energy Company",
+          "hybrid_correct": true,
+          "baseline": "RECITALS",
+          "baseline_correct": false
+        },
+        "effective_date": {
+          "expected": "March 1, 2024",
+          "hybrid": "March 1, 2024",
+          "hybrid_correct": true,
+          "baseline": "March 1, 2024",
+          "baseline_correct": true
+        },
+        "governing_law": {
+          "expected": "California",
+          "hybrid": "California",
+          "hybrid_correct": true,
+          "baseline": "Provider's breach of its obligations under this Agreement.",
+          "baseline_correct": false
+        },
+        "contract_value": {
+          "expected": "$73,000.00",
+          "hybrid": "$73,000.00",
+          "hybrid_correct": true,
+          "baseline": "$73,000.00",
+          "baseline_correct": true
+        },
+        "payment_terms": {
+          "expected": "Net 60",
+          "hybrid": "Net 60",
+          "hybrid_correct": true,
+          "baseline": "Cascade Legal Services LLP Lakeside Energy Company",
+          "baseline_correct": false
+        }
+      }
+    },
+    {
+      "id": "contract_03",
+      "doc_type": "contract",
+      "detected_type": "contract",
+      "fields": {
+        "party_1": {
+          "expected": "Ironwood Capital Partners",
+          "hybrid": "Ironwood Capital Partners",
+          "hybrid_correct": true,
+          "baseline": "PROFESSIONAL SERVICES AGREEMENT",
+          "baseline_correct": false
+        },
+        "party_2": {
+          "expected": "Falcon Media Holdings",
+          "hybrid": "Falcon Media Holdings",
+          "hybrid_correct": true,
+          "baseline": "RECITALS",
+          "baseline_correct": false
+        },
+        "effective_date": {
+          "expected": "April 1, 2024",
+          "hybrid": "April 1, 2024",
+          "hybrid_correct": true,
+          "baseline": "April 1, 2024",
+          "baseline_correct": true
+        },
+        "governing_law": {
+          "expected": "Texas",
+          "hybrid": "Texas",
+          "hybrid_correct": true,
+          "baseline": "Provider's breach of its obligations under this Agreement.",
+          "baseline_correct": false
+        },
+        "contract_value": {
+          "expected": "$85,500.00",
+          "hybrid": "$85,500.00",
+          "hybrid_correct": true,
+          "baseline": "$85,500.00",
+          "baseline_correct": true
+        },
+        "payment_terms": {
+          "expected": "Net 45",
+          "hybrid": "Net 45",
+          "hybrid_correct": true,
+          "baseline": "Ironwood Capital Partners Falcon Media Holdings",
+          "baseline_correct": false
+        }
+      }
+    },
+    {
+      "id": "contract_04",
+      "doc_type": "contract",
+      "detected_type": "contract",
+      "fields": {
+        "party_1": {
+          "expected": "Summit Ridge Technologies",
+          "hybrid": "Summit Ridge Technologies",
+          "hybrid_correct": true,
+          "baseline": "PROFESSIONAL SERVICES AGREEMENT",
+          "baseline_correct": false
+        },
+        "party_2": {
+          "expected": "Acme Manufacturing Inc.",
+          "hybrid": "Acme Manufacturing Inc",
+          "hybrid_correct": true,
+          "baseline": "RECITALS",
+          "baseline_correct": false
+        },
+        "effective_date": {
+          "expected": "May 1, 2024",
+          "hybrid": "May 1, 2024",
+          "hybrid_correct": true,
+          "baseline": "May 1, 2024",
+          "baseline_correct": true
+        },
+        "governing_law": {
+          "expected": "Illinois",
+          "hybrid": "Illinois",
+          "hybrid_correct": true,
+          "baseline": "Provider's breach of its obligations under this Agreement.",
+          "baseline_correct": false
+        },
+        "contract_value": {
+          "expected": "$98,000.00",
+          "hybrid": "$98,000.00",
+          "hybrid_correct": true,
+          "baseline": "$98,000.00",
+          "baseline_correct": true
+        },
+        "payment_terms": {
+          "expected": "Net 30",
+          "hybrid": "Net 30",
+          "hybrid_correct": true,
+          "baseline": "Summit Ridge Technologies Acme Manufacturing Inc.",
+          "baseline_correct": false
+        }
+      }
+    },
+    {
+      "id": "contract_05",
+      "doc_type": "contract",
+      "detected_type": "contract",
+      "fields": {
+        "party_1": {
+          "expected": "Northwind Consulting LLC",
+          "hybrid": "Northwind Consulting LLC",
+          "hybrid_correct": true,
+          "baseline": "PROFESSIONAL SERVICES AGREEMENT",
+          "baseline_correct": false
+        },
+        "party_2": {
+          "expected": "Atlas Logistics LLC",
+          "hybrid": "Atlas Logistics LLC",
+          "hybrid_correct": true,
+          "baseline": "RECITALS",
+          "baseline_correct": false
+        },
+        "effective_date": {
+          "expected": "June 1, 2024",
+          "hybrid": "June 1, 2024",
+          "hybrid_correct": true,
+          "baseline": "June 1, 2024",
+          "baseline_correct": true
+        },
+        "governing_law": {
+          "expected": "Washington",
+          "hybrid": "Washington",
+          "hybrid_correct": true,
+          "baseline": "Provider's breach of its obligations under this Agreement.",
+          "baseline_correct": false
+        },
+        "contract_value": {
+          "expected": "$110,500.00",
+          "hybrid": "$110,500.00",
+          "hybrid_correct": true,
+          "baseline": "$110,500.00",
+          "baseline_correct": true
+        },
+        "payment_terms": {
+          "expected": "Net 60",
+          "hybrid": "Net 60",
+          "hybrid_correct": true,
+          "baseline": "Northwind Consulting LLC Atlas Logistics LLC",
+          "baseline_correct": false
+        }
+      }
+    },
+    {
+      "id": "financial_00",
+      "doc_type": "financial_statement",
+      "detected_type": "financial_statement",
+      "fields": {
+        "company_name": {
+          "expected": "Northwind Consulting LLC",
+          "hybrid": "Northwind Consulting LLC",
+          "hybrid_correct": true,
+          "baseline": "Northwind Consulting LLC",
+          "baseline_correct": true
+        },
+        "period": {
+          "expected": "December 31, 2024",
+          "hybrid": "December 31, 2024",
+          "hybrid_correct": true,
+          "baseline": "December 31, 2024",
+          "baseline_correct": true
+        },
+        "total_revenue": {
+          "expected": "$4,500,000.00",
+          "hybrid": "$4,500,000.00",
+          "hybrid_correct": true,
+          "baseline": "$4,500,000.00",
+          "baseline_correct": true
+        },
+        "operating_expenses": {
+          "expected": "$2,790,000.00",
+          "hybrid": "$2,790,000.00",
+          "hybrid_correct": true,
+          "baseline": "$2,790,000.00",
+          "baseline_correct": true
+        },
+        "net_income": {
+          "expected": "$810,000.00",
+          "hybrid": "$810,000.00",
+          "hybrid_correct": true,
+          "baseline": "$810,000.00",
+          "baseline_correct": true
+        },
+        "total_assets": {
+          "expected": "$13,500,000.00",
+          "hybrid": "$13,500,000.00",
+          "hybrid_correct": true,
+          "baseline": "$13,500,000.00",
+          "baseline_correct": true
+        },
+        "total_liabilities": {
+          "expected": "$5,670,000.00",
+          "hybrid": "$5,670,000.00",
+          "hybrid_correct": true,
+          "baseline": "$5,670,000.00",
+          "baseline_correct": true
+        }
+      }
+    },
+    {
+      "id": "financial_01",
+      "doc_type": "financial_statement",
+      "detected_type": "financial_statement",
+      "fields": {
+        "company_name": {
+          "expected": "Blue Harbor Analytics Inc.",
+          "hybrid": "Blue Harbor Analytics Inc",
+          "hybrid_correct": true,
+          "baseline": "Blue Harbor Analytics Inc.",
+          "baseline_correct": true
+        },
+        "period": {
+          "expected": "June 30, 2024",
+          "hybrid": "June 30, 2024",
+          "hybrid_correct": true,
+          "baseline": "June 30, 2024",
+          "baseline_correct": true
+        },
+        "total_revenue": {
+          "expected": "$5,250,000.00",
+          "hybrid": "$5,250,000.00",
+          "hybrid_correct": true,
+          "baseline": "$5,250,000.00",
+          "baseline_correct": true
+        },
+        "operating_expenses": {
+          "expected": "$3,255,000.00",
+          "hybrid": "$3,255,000.00",
+          "hybrid_correct": true,
+          "baseline": "$3,255,000.00",
+          "baseline_correct": true
+        },
+        "net_income": {
+          "expected": "$945,000.00",
+          "hybrid": "$945,000.00",
+          "hybrid_correct": true,
+          "baseline": "$945,000.00",
+          "baseline_correct": true
+        },
+        "total_assets": {
+          "expected": "$15,650,000.00",
+          "hybrid": "$15,650,000.00",
+          "hybrid_correct": true,
+          "baseline": "$15,650,000.00",
+          "baseline_correct": true
+        },
+        "total_liabilities": {
+          "expected": "$6,573,000.00",
+          "hybrid": "$6,573,000.00",
+          "hybrid_correct": true,
+          "baseline": "$6,573,000.00",
+          "baseline_correct": true
+        }
+      }
+    },
+    {
+      "id": "financial_02",
+      "doc_type": "financial_statement",
+      "detected_type": "financial_statement",
+      "fields": {
+        "company_name": {
+          "expected": "Ironwood Capital Partners",
+          "hybrid": "Ironwood Capital Partners",
+          "hybrid_correct": true,
+          "baseline": "Ironwood Capital Partners",
+          "baseline_correct": true
+        },
+        "period": {
+          "expected": "December 31, 2024",
+          "hybrid": "December 31, 2024",
+          "hybrid_correct": true,
+          "baseline": "December 31, 2024",
+          "baseline_correct": true
+        },
+        "total_revenue": {
+          "expected": "$6,000,000.00",
+          "hybrid": "$6,000,000.00",
+          "hybrid_correct": true,
+          "baseline": "$6,000,000.00",
+          "baseline_correct": true
+        },
+        "operating_expenses": {
+          "expected": "$3,720,000.00",
+          "hybrid": "$3,720,000.00",
+          "hybrid_correct": true,
+          "baseline": "$3,720,000.00",
+          "baseline_correct": true
+        },
+        "net_income": {
+          "expected": "$1,080,000.00",
+          "hybrid": "$1,080,000.00",
+          "hybrid_correct": true,
+          "baseline": "$1,080,000.00",
+          "baseline_correct": true
+        },
+        "total_assets": {
+          "expected": "$17,800,000.00",
+          "hybrid": "$17,800,000.00",
+          "hybrid_correct": true,
+          "baseline": "$17,800,000.00",
+          "baseline_correct": true
+        },
+        "total_liabilities": {
+          "expected": "$7,476,000.00",
+          "hybrid": "$7,476,000.00",
+          "hybrid_correct": true,
+          "baseline": "$7,476,000.00",
+          "baseline_correct": true
+        }
+      }
+    },
+    {
+      "id": "financial_03",
+      "doc_type": "financial_statement",
+      "detected_type": "financial_statement",
+      "fields": {
+        "company_name": {
+          "expected": "Acme Manufacturing Inc.",
+          "hybrid": "Acme Manufacturing Inc",
+          "hybrid_correct": true,
+          "baseline": "Acme Manufacturing Inc.",
+          "baseline_correct": true
+        },
+        "period": {
+          "expected": "June 30, 2024",
+          "hybrid": "June 30, 2024",
+          "hybrid_correct": true,
+          "baseline": "June 30, 2024",
+          "baseline_correct": true
+        },
+        "total_revenue": {
+          "expected": "$6,750,000.00",
+          "hybrid": "$6,750,000.00",
+          "hybrid_correct": true,
+          "baseline": "$6,750,000.00",
+          "baseline_correct": true
+        },
+        "operating_expenses": {
+          "expected": "$4,185,000.00",
+          "hybrid": "$4,185,000.00",
+          "hybrid_correct": true,
+          "baseline": "$4,185,000.00",
+          "baseline_correct": true
+        },
+        "net_income": {
+          "expected": "$1,215,000.00",
+          "hybrid": "$1,215,000.00",
+          "hybrid_correct": true,
+          "baseline": "$1,215,000.00",
+          "baseline_correct": true
+        },
+        "total_assets": {
+          "expected": "$19,950,000.00",
+          "hybrid": "$19,950,000.00",
+          "hybrid_correct": true,
+          "baseline": "$19,950,000.00",
+          "baseline_correct": true
+        },
+        "total_liabilities": {
+          "expected": "$8,379,000.00",
+          "hybrid": "$8,379,000.00",
+          "hybrid_correct": true,
+          "baseline": "$8,379,000.00",
+          "baseline_correct": true
+        }
+      }
+    },
+    {
+      "id": "financial_04",
+      "doc_type": "financial_statement",
+      "detected_type": "financial_statement",
+      "fields": {
+        "company_name": {
+          "expected": "Pinnacle Healthcare Group",
+          "hybrid": "Pinnacle Healthcare Group",
+          "hybrid_correct": true,
+          "baseline": "Pinnacle Healthcare Group",
+          "baseline_correct": true
+        },
+        "period": {
+          "expected": "December 31, 2024",
+          "hybrid": "December 31, 2024",
+          "hybrid_correct": true,
+          "baseline": "December 31, 2024",
+          "baseline_correct": true
+        },
+        "total_revenue": {
+          "expected": "$7,500,000.00",
+          "hybrid": "$7,500,000.00",
+          "hybrid_correct": true,
+          "baseline": "$7,500,000.00",
+          "baseline_correct": true
+        },
+        "operating_expenses": {
+          "expected": "$4,650,000.00",
+          "hybrid": "$4,650,000.00",
+          "hybrid_correct": true,
+          "baseline": "$4,650,000.00",
+          "baseline_correct": true
+        },
+        "net_income": {
+          "expected": "$1,350,000.00",
+          "hybrid": "$1,350,000.00",
+          "hybrid_correct": true,
+          "baseline": "$1,350,000.00",
+          "baseline_correct": true
+        },
+        "total_assets": {
+          "expected": "$22,100,000.00",
+          "hybrid": "$22,100,000.00",
+          "hybrid_correct": true,
+          "baseline": "$22,100,000.00",
+          "baseline_correct": true
+        },
+        "total_liabilities": {
+          "expected": "$9,282,000.00",
+          "hybrid": "$9,282,000.00",
+          "hybrid_correct": true,
+          "baseline": "$9,282,000.00",
+          "baseline_correct": true
+        }
+      }
+    },
+    {
+      "id": "financial_05",
+      "doc_type": "financial_statement",
+      "detected_type": "financial_statement",
+      "fields": {
+        "company_name": {
+          "expected": "Lakeside Energy Company",
+          "hybrid": "Lakeside Energy Company",
+          "hybrid_correct": true,
+          "baseline": "Lakeside Energy Company",
+          "baseline_correct": true
+        },
+        "period": {
+          "expected": "June 30, 2024",
+          "hybrid": "June 30, 2024",
+          "hybrid_correct": true,
+          "baseline": "June 30, 2024",
+          "baseline_correct": true
+        },
+        "total_revenue": {
+          "expected": "$8,250,000.00",
+          "hybrid": "$8,250,000.00",
+          "hybrid_correct": true,
+          "baseline": "$8,250,000.00",
+          "baseline_correct": true
+        },
+        "operating_expenses": {
+          "expected": "$5,115,000.00",
+          "hybrid": "$5,115,000.00",
+          "hybrid_correct": true,
+          "baseline": "$5,115,000.00",
+          "baseline_correct": true
+        },
+        "net_income": {
+          "expected": "$1,485,000.00",
+          "hybrid": "$1,485,000.00",
+          "hybrid_correct": true,
+          "baseline": "$1,485,000.00",
+          "baseline_correct": true
+        },
+        "total_assets": {
+          "expected": "$24,250,000.00",
+          "hybrid": "$24,250,000.00",
+          "hybrid_correct": true,
+          "baseline": "$24,250,000.00",
+          "baseline_correct": true
+        },
+        "total_liabilities": {
+          "expected": "$10,185,000.00",
+          "hybrid": "$10,185,000.00",
+          "hybrid_correct": true,
+          "baseline": "$10,185,000.00",
+          "baseline_correct": true
+        }
+      }
+    },
+    {
+      "id": "court_00",
+      "doc_type": "court_document",
+      "detected_type": "court_document",
+      "fields": {
+        "case_number": {
+          "expected": "3:24-cv-01200",
+          "hybrid": "3:24-cv-01200",
+          "hybrid_correct": true,
+          "baseline": "UNITED STATES DISTRICT COURT NORTHERN",
+          "baseline_correct": false
+        },
+        "plaintiff": {
+          "expected": "John Martinez",
+          "hybrid": "OF CALIFORNIA\nJOHN MARTINEZ",
+          "hybrid_correct": true,
+          "baseline": "DISTRICT OF CALIFORNIA",
+          "baseline_correct": false
+        },
+        "filing_date": {
+          "expected": "January 12, 2024",
+          "hybrid": "January 12, 2024",
+          "hybrid_correct": true,
+          "baseline": "January 12, 2024",
+          "baseline_correct": true
+        },
+        "judge": {
+          "expected": "Michael Tanaka",
+          "hybrid": "Michael Tanaka",
+          "hybrid_correct": true,
+          "baseline": "JOHN MARTINEZ,",
+          "baseline_correct": false
+        }
+      }
+    },
+    {
+      "id": "court_01",
+      "doc_type": "court_document",
+      "detected_type": "court_document",
+      "fields": {
+        "case_number": {
+          "expected": "3:24-cv-01211",
+          "hybrid": "3:24-cv-01211",
+          "hybrid_correct": true,
+          "baseline": "UNITED STATES DISTRICT COURT SOUTHERN",
+          "baseline_correct": false
+        },
+        "plaintiff": {
+          "expected": "Sarah Chen",
+          "hybrid": "NEW YORK\nSARAH CHEN",
+          "hybrid_correct": true,
+          "baseline": "DISTRICT OF NEW YORK",
+          "baseline_correct": false
+        },
+        "filing_date": {
+          "expected": "February 12, 2024",
+          "hybrid": "February 12, 2024",
+          "hybrid_correct": true,
+          "baseline": "February 12, 2024",
+          "baseline_correct": true
+        },
+        "judge": {
+          "expected": "Laura Whitfield",
+          "hybrid": "Laura Whitfield",
+          "hybrid_correct": true,
+          "baseline": "SARAH CHEN,",
+          "baseline_correct": false
+        }
+      }
+    },
+    {
+      "id": "court_02",
+      "doc_type": "court_document",
+      "detected_type": "court_document",
+      "fields": {
+        "case_number": {
+          "expected": "3:24-cv-01222",
+          "hybrid": "3:24-cv-01222",
+          "hybrid_correct": true,
+          "baseline": "SUPERIOR COURT OF THE STATE OF WASHINGTON",
+          "baseline_correct": false
+        },
+        "plaintiff": {
+          "expected": "David Okafor",
+          "hybrid": "OF WASHINGTON\nDAVID OKAFOR",
+          "hybrid_correct": true,
+          "baseline": "DAVID OKAFOR,",
+          "baseline_correct": true
+        },
+        "filing_date": {
+          "expected": "March 12, 2024",
+          "hybrid": "March 12, 2024",
+          "hybrid_correct": true,
+          "baseline": "March 12, 2024",
+          "baseline_correct": true
+        },
+        "judge": {
+          "expected": "Robert Alvarez",
+          "hybrid": "Robert Alvarez",
+          "hybrid_correct": true,
+          "baseline": "Plaintiff,",
+          "baseline_correct": false
+        }
+      }
+    },
+    {
+      "id": "court_03",
+      "doc_type": "court_document",
+      "detected_type": "court_document",
+      "fields": {
+        "case_number": {
+          "expected": "3:24-cv-01233",
+          "hybrid": "3:24-cv-01233",
+          "hybrid_correct": true,
+          "baseline": "UNITED STATES DISTRICT COURT NORTHERN",
+          "baseline_correct": false
+        },
+        "plaintiff": {
+          "expected": "Emily Rousseau",
+          "hybrid": "OF CALIFORNIA\nEMILY ROUSSEAU",
+          "hybrid_correct": true,
+          "baseline": "DISTRICT OF CALIFORNIA",
+          "baseline_correct": false
+        },
+        "filing_date": {
+          "expected": "April 12, 2024",
+          "hybrid": "April 12, 2024",
+          "hybrid_correct": true,
+          "baseline": "April 12, 2024",
+          "baseline_correct": true
+        },
+        "judge": {
+          "expected": "Priya Natarajan",
+          "hybrid": "Priya Natarajan",
+          "hybrid_correct": true,
+          "baseline": "EMILY ROUSSEAU,",
+          "baseline_correct": false
+        }
+      }
+    },
+    {
+      "id": "court_04",
+      "doc_type": "court_document",
+      "detected_type": "court_document",
+      "fields": {
+        "case_number": {
+          "expected": "3:24-cv-01244",
+          "hybrid": "3:24-cv-01244",
+          "hybrid_correct": true,
+          "baseline": "UNITED STATES DISTRICT COURT SOUTHERN",
+          "baseline_correct": false
+        },
+        "plaintiff": {
+          "expected": "Michael Tanaka",
+          "hybrid": "NEW YORK\nMICHAEL TANAKA",
+          "hybrid_correct": true,
+          "baseline": "DISTRICT OF NEW YORK",
+          "baseline_correct": false
+        },
+        "filing_date": {
+          "expected": "May 12, 2024",
+          "hybrid": "May 12, 2024",
+          "hybrid_correct": true,
+          "baseline": "May 12, 2024",
+          "baseline_correct": true
+        },
+        "judge": {
+          "expected": "John Martinez",
+          "hybrid": "John Martinez",
+          "hybrid_correct": true,
+          "baseline": "MICHAEL TANAKA,",
+          "baseline_correct": false
+        }
+      }
+    },
+    {
+      "id": "court_05",
+      "doc_type": "court_document",
+      "detected_type": "court_document",
+      "fields": {
+        "case_number": {
+          "expected": "3:24-cv-01255",
+          "hybrid": "3:24-cv-01255",
+          "hybrid_correct": true,
+          "baseline": "SUPERIOR COURT OF THE STATE OF WASHINGTON",
+          "baseline_correct": false
+        },
+        "plaintiff": {
+          "expected": "Laura Whitfield",
+          "hybrid": "OF WASHINGTON\nLAURA WHITFIELD",
+          "hybrid_correct": true,
+          "baseline": "LAURA WHITFIELD,",
+          "baseline_correct": true
+        },
+        "filing_date": {
+          "expected": "June 12, 2024",
+          "hybrid": "June 12, 2024",
+          "hybrid_correct": true,
+          "baseline": "June 12, 2024",
+          "baseline_correct": true
+        },
+        "judge": {
+          "expected": "Sarah Chen",
+          "hybrid": "Sarah Chen",
+          "hybrid_correct": true,
+          "baseline": "Plaintiff,",
+          "baseline_correct": false
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+services:
+  api:
+    build:
+      context: .
+      args:
+        FULL: "${FULL:-0}"   # FULL=1 docker compose up --build  → full ML stack
+    ports:
+      - "8000:8000"
+    volumes:
+      - docintel-data:/app/data
+    environment:
+      - DOCINTEL_DATA_DIR=/app/data
+      - DOCINTEL_DATABASE_URL=sqlite:////app/data/docintel.db
+      # - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}   # optional LLM answers
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build:
+      context: .
+      args:
+        FULL: "0"
+    command: streamlit run frontend/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"
+    environment:
+      - DOCINTEL_API_URL=http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  docintel-data:
