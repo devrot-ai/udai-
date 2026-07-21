@@ -23,7 +23,7 @@ import logging
 import time
 from typing import Dict, List
 
-from .classifier import classify
+from .classifier import classify_detailed
 from .extractors.base import ExtractedField
 from .extractors.donut import DonutExtractor
 from .extractors.layoutlm import LayoutLMExtractor
@@ -85,7 +85,8 @@ def process_document(path: str) -> dict:
     """Run the full pipeline on one file and return the result dict."""
     t0 = time.time()
     doc: IngestedDocument = ingest(path)
-    doc_type, type_conf = classify(doc.full_text)
+    classification = classify_detailed(doc.full_text)
+    doc_type, type_conf = classification["type"], classification["confidence"]
 
     candidates: List[ExtractedField] = []
     used: List[str] = []
@@ -119,6 +120,7 @@ def process_document(path: str) -> dict:
         },
         "tables": tables,
         "meta": {
+            "classifier": classification["method"],
             "extractors_used": used,
             "is_scanned": doc.is_scanned,
             "ingest_source": doc.source,

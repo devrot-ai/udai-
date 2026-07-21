@@ -15,7 +15,7 @@
                         │            Hybrid extraction pipeline            │
                         │                                                  │
                         │  1. Ingest  (pdfplumber / pypdfium2 / Tesseract) │
-                        │  2. Classify (keyword scorer + zero-shot NLI)    │
+                        │  2. Classify (TF-IDF+LogReg → keywords → NLI)    │
                         │  3. Extract  ┌ LayoutLMv3 (layout-aware KV)      │
                         │              ├ Donut (OCR-free visual QA)        │
                         │              ├ Rules (domain regex + layout)     │
@@ -48,12 +48,30 @@ render scale.
 
 ## Document type detection (`pipeline/classifier.py`)
 
-A weighted-keyword scorer covers five domain types (invoice, contract,
-financial statement, court document, receipt). Confidence combines absolute
-evidence with the margin over the runner-up type. When the scorer is
-uncertain (< 0.6) *and* transformers is installed, a `bart-large-mnli`
-zero-shot classifier breaks the tie. The scorer alone achieves 100% on the
-evaluation set; the zero-shot path is a safety net for out-of-domain inputs.
+A three-tier ensemble:
+
+1. **Supervised ML (primary)** — TF-IDF (1–2 grams, sublinear) + Logistic
+   Regression, trained by `training/train_classifier.py` on a randomized
+   synthetic corpus (~900 samples, 6 classes including an `other` negative
+   class). The corpus generator randomizes field labels, entities, amounts,
+   dates and section order, and injects OCR-style character noise into a
+   third of samples, so the model learns class vocabulary/structure rather
+   than memorizing templates. Calibrated confidence from `predict_proba`.
+   Held-out accuracy 100% (180 stratified samples); 24/24 on the PDF
+   evaluation set, whose documents come from *different* templates than the
+   training corpus. Loaded lazily from `models/doc_classifier.joblib`
+   (`backend/app/ml/doc_classifier.py`).
+2. **Weighted-keyword scorer** — deterministic, dependency-free, always
+   available. Confidence combines absolute evidence with the margin over the
+   runner-up type.
+3. **Zero-shot NLI** (`bart-large-mnli`) — consulted only when no trained
+   model is present and the keyword scorer is uncertain (< 0.6).
+
+When tiers 1 and 2 agree, confidence is boosted (+0.05, capped at 0.99);
+when they disagree, the more confident tier wins with confidence capped at
+0.85. The deciding method (`ml+keywords`, `ml`, `keywords`, `zero-shot`) is
+recorded in `meta.classifier` of every extraction result, and model
+availability is reported by `/health`.
 
 ## The hybrid extractor (`pipeline/hybrid.py`)
 

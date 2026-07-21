@@ -1,0 +1,66 @@
+{
+  "held_out_accuracy": 1.0,
+  "train_samples": 720,
+  "test_samples": 180,
+  "classes": [
+    "contract",
+    "court_document",
+    "financial_statement",
+    "invoice",
+    "other",
+    "receipt"
+  ],
+  "confusion_matrix": [
+    [
+      30,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      30,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      30,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      30,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      30,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      30
+    ]
+  ],
+  "vectorizer": "tfidf(1-2grams, sublinear, min_df=2)",
+  "model": "LogisticRegression(C=4.0)",
+  "seed": 7
+}

@@ -19,8 +19,11 @@ provenance, and a bounding box for visual verification.
 
 - **FastAPI backend** — async upload → background processing → results,
   semantic query, and dashboard APIs, all documented via OpenAPI (`/docs`)
-- **Automatic document-type detection** — invoice / contract / financial
-  statement / court document / receipt, with confidence
+- **Automatic document-type detection** — a supervised classifier (TF-IDF +
+  Logistic Regression, trained on a 900-sample randomized synthetic corpus
+  with an `other` negative class) ensembled with a keyword scorer and a
+  zero-shot NLI fallback; agreement between independent tiers boosts
+  confidence, and the deciding method is recorded per document
 - **Field extraction with confidence scores** — parties, dates, amounts,
   clauses, payment terms, case numbers… schema per document type; every
   field records which extractor(s) produced it and where it sits on the page
@@ -55,10 +58,19 @@ with normalized exact/containment/numeric matching:
 
 **+50.7 percentage points over the baseline** — target was ≥ 90%. Per-type
 breakdown and per-field diffs are written to `evaluation/results/report.md`
-and `results.json`. Reproduce with:
+and `results.json`.
+
+The supervised classifier is evaluated separately
+(`evaluation/results/classifier_report.md`): **100% held-out accuracy** on a
+stratified 20% split of the training corpus, and **24/24** on the PDF
+evaluation set — which is generated from *different templates* than the
+training data, so this is a genuine generalization check, not memorization.
+
+Reproduce everything with:
 
 ```bash
 python evaluation/generate_dataset.py     # 24 PDFs + ground truth
+python training/train_classifier.py       # supervised classifier + report
 python evaluation/run_eval.py             # hybrid vs baseline report
 ```
 
@@ -146,7 +158,7 @@ Example extraction result:
 PDF / image
    │
    ├─ 1. Ingest      pdfplumber text+word boxes · pypdfium2 rendering · Tesseract for scans
-   ├─ 2. Classify    weighted keyword scorer (+ zero-shot NLI tie-break)
+   ├─ 2. Classify    supervised TF-IDF+LogReg → keyword scorer → zero-shot NLI
    ├─ 3. Extract     LayoutLMv3 → Donut → Rules → Tesseract+spaCy (all optional except Rules)
    ├─ 4. Merge       confidence × source-weight vote; cross-extractor agreement boosts confidence
    └─ 5. Tables      ruled (pdfplumber) + borderless (word-geometry clustering)
@@ -163,6 +175,7 @@ degradation strategy: **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
 ```
 backend/app/
   main.py                     FastAPI app + /health
+  ml/doc_classifier.py        supervised classifier wrapper (lazy joblib load)
   config.py · database.py · schemas.py
   api/                        documents, query, dashboard routers
   workers/processor.py        background processing job
@@ -176,10 +189,12 @@ backend/app/
     store.py                  ChromaDB (TF-IDF fallback) + chunking
     qa.py                     extractive / LLM answer synthesis
 frontend/streamlit_app.py     upload · results+overlay · ask · dashboard
+training/train_classifier.py  corpus generator + TF-IDF/LogReg training
+models/                       doc_classifier.joblib + metrics (retrainable)
 evaluation/
   generate_dataset.py         24-doc synthetic test set + ground truth
   run_eval.py                 hybrid vs baseline accuracy report
-  results/                    report.md · results.json
+  results/                    report.md · results.json · classifier_report.md
 tests/                        pipeline unit tests + API integration tests
 scripts/make_screenshots.py   regenerate the demo overlays
 ```
@@ -187,7 +202,7 @@ scripts/make_screenshots.py   regenerate the demo overlays
 ## Tests
 
 ```bash
-pytest tests/ -q     # 18 tests: pipeline units + full API integration flow
+pytest tests/ -q     # 22 tests: pipeline units, ML classifier + full API integration flow
 ```
 
 ## Design decisions
@@ -198,6 +213,13 @@ pytest tests/ -q     # 18 tests: pipeline units + full API integration flow
   can hallucinate. Voting between them — and boosting confidence when
   independent methods agree — yields both coverage and an honest confidence
   signal per field.
+- **Why TF-IDF + Logistic Regression for classification (not a transformer)?**
+  Document classes here are separable by vocabulary; a linear model over
+  n-grams gives calibrated probabilities, millisecond inference, a 432 KB
+  artifact, and inspectable coefficients (you can print exactly which terms
+  drove a prediction — valuable in legal settings). The ensemble design means
+  a LayoutLMv3 sequence-classification head fine-tuned on RVL-CDIP can drop
+  in as a stronger tier later without touching callers.
 - **Why normalized bounding boxes everywhere?** One coordinate system feeds
   LayoutLMv3 (0–1000 space), the merge step, and the frontend overlay at any
   render scale, and makes OCR and native-PDF words interchangeable.

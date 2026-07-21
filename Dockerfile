@@ -28,6 +28,10 @@ RUN if [ "$FULL" = "1" ]; then \
 COPY backend ./backend
 COPY frontend ./frontend
 COPY evaluation ./evaluation
+COPY training ./training
+
+# Train the supervised document classifier at build time (fast, ~10s)
+RUN python training/train_classifier.py
 
 ENV DOCINTEL_DATA_DIR=/app/data
 RUN mkdir -p /app/data/uploads /app/data/processed /app/data/chroma

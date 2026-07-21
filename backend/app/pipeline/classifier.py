@@ -1,8 +1,17 @@
-"""Document type detection.
+"""Document type detection — a three-tier ensemble.
 
-Primary strategy is a weighted-keyword scorer that is fast, deterministic and
-dependency-free. When the transformers stack is installed, a zero-shot NLI
-classifier is blended in for documents where the keyword scorer is uncertain.
+Tier 1 (supervised ML): TF-IDF + Logistic Regression trained on a randomized
+        synthetic corpus (training/train_classifier.py). Calibrated
+        probabilities via predict_proba.
+Tier 2 (heuristic):     weighted-keyword scorer — deterministic,
+        dependency-free, always available.
+Tier 3 (zero-shot):     bart-large-mnli NLI classifier, consulted only when
+        the first two tiers are jointly uncertain and transformers is
+        installed.
+
+When tiers 1 and 2 agree, confidence is boosted; when they disagree, the more
+confident tier wins with a capped confidence. The deciding method is exposed
+via classify_detailed() and recorded in extraction metadata.
 """
 
 from __future__ import annotations
@@ -96,11 +105,7 @@ def _zero_shot(text: str) -> Tuple[str, float] | None:
         return None
 
 
-def classify(text: str) -> Tuple[str, float]:
-    """Return (document_type, confidence in [0, 1])."""
-    if not text.strip():
-        return "other", 0.0
-
+def _keyword_classify(text: str) -> Tuple[str, float]:
     scores = _keyword_scores(text)
     ranked = sorted(scores.items(), key=lambda kv: kv[1], reverse=True)
     best_type, best = ranked[0]
@@ -112,10 +117,43 @@ def classify(text: str) -> Tuple[str, float]:
     # Confidence from absolute evidence and separation from the runner-up
     margin = (best - runner_up) / best
     confidence = min(0.98, 0.45 + 0.35 * margin + min(best, 20) / 60)
-
-    # If the keyword scorer is unsure, let a zero-shot model break the tie
-    if confidence < 0.6:
-        zs = _zero_shot(text)
-        if zs and zs[1] > confidence:
-            return zs
     return best_type, round(confidence, 3)
+
+
+def classify_detailed(text: str) -> dict:
+    """Return {"type", "confidence", "method"} from the ensemble."""
+    if not text.strip():
+        return {"type": "other", "confidence": 0.0, "method": "empty"}
+
+    from ..ml import doc_classifier
+
+    ml = doc_classifier.predict(text)
+    kw_type, kw_conf = _keyword_classify(text)
+
+    if ml is not None:
+        ml_type, ml_conf = ml
+        if ml_type == kw_type:
+            # independent agreement is strong evidence
+            conf = min(0.99, max(ml_conf, kw_conf) + 0.05)
+            return {"type": ml_type, "confidence": round(conf, 3),
+                    "method": "ml+keywords"}
+        # disagreement: trust the more confident tier, but cap the score
+        if ml_conf >= kw_conf:
+            return {"type": ml_type, "confidence": round(min(ml_conf, 0.85), 3),
+                    "method": "ml"}
+        return {"type": kw_type, "confidence": round(min(kw_conf, 0.85), 3),
+                "method": "keywords"}
+
+    # no trained model available — keyword scorer, zero-shot as tie-breaker
+    if kw_conf < 0.6:
+        zs = _zero_shot(text)
+        if zs and zs[1] > kw_conf:
+            return {"type": zs[0], "confidence": round(zs[1], 3),
+                    "method": "zero-shot"}
+    return {"type": kw_type, "confidence": kw_conf, "method": "keywords"}
+
+
+def classify(text: str) -> Tuple[str, float]:
+    """Return (document_type, confidence in [0, 1])."""
+    d = classify_detailed(text)
+    return d["type"], d["confidence"]

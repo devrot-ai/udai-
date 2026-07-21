@@ -52,6 +52,7 @@ app.include_router(dashboard.router)
 
 @app.get("/health", tags=["system"])
 def health():
+    from .ml import doc_classifier
     from .pipeline.hybrid import _EXTRACTORS
     from .rag.store import get_store
 
@@ -59,5 +60,6 @@ def health():
         "status": "ok",
         "version": __version__,
         "extractors": {e.name: e.available() for e in _EXTRACTORS},
+        "ml_classifier": doc_classifier.available(),
         "vector_backend": get_store().backend,
     }

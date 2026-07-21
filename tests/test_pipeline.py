@@ -52,6 +52,63 @@ class TestClassifier:
         assert classify("")[0] == "other"
 
 
+class TestMLClassifier:
+    """Supervised TF-IDF + LogisticRegression tier (train_classifier.py)."""
+
+    @pytest.fixture(scope="class", autouse=True)
+    def model(self):
+        from backend.app.ml import doc_classifier
+
+        if not doc_classifier.MODEL_PATH.exists():
+            subprocess.run(
+                [sys.executable, str(ROOT / "training" / "train_classifier.py"),
+                 "--samples-per-class", "80"],
+                check=True, cwd=ROOT,
+            )
+        doc_classifier._CACHE.clear()
+        assert doc_classifier.available()
+
+    def test_predicts_all_types_on_pdfs(self):
+        from backend.app.ml import doc_classifier
+        from backend.app.pipeline.ingest import ingest
+
+        expected = {"invoice": "invoice", "contract": "contract",
+                    "financial": "financial_statement", "court": "court_document"}
+        for prefix, doc_type in expected.items():
+            doc = ingest(str(_sample(prefix)))
+            label, prob = doc_classifier.predict(doc.full_text)
+            assert label == doc_type, f"{prefix}: got {label}"
+            assert 0 < prob <= 1
+
+    def test_other_class_negative(self):
+        from backend.app.ml import doc_classifier
+
+        label, _ = doc_classifier.predict(
+            "INTERNAL MEMORANDUM\nTo: All Staff\nSubject: Office relocation\n"
+            "Please note the office will be closed on Friday for maintenance."
+        )
+        assert label == "other"
+
+    def test_ensemble_agreement_boosts_and_reports_method(self):
+        from backend.app.pipeline.classifier import classify_detailed
+        from backend.app.pipeline.ingest import ingest
+
+        doc = ingest(str(_sample("invoice")))
+        d = classify_detailed(doc.full_text)
+        assert d["type"] == "invoice"
+        assert d["method"] == "ml+keywords"
+        assert d["confidence"] > 0.8
+
+    def test_ensemble_falls_back_without_model(self, monkeypatch):
+        from backend.app.ml import doc_classifier
+        from backend.app.pipeline.classifier import classify_detailed
+
+        monkeypatch.setattr(doc_classifier, "predict", lambda text: None)
+        d = classify_detailed("Invoice Number: INV-1 Total Due: $10.00 Bill To: X")
+        assert d["type"] == "invoice"
+        assert d["method"] in ("keywords", "zero-shot")
+
+
 class TestIngest:
     def test_native_pdf_has_words(self):
         from backend.app.pipeline.ingest import ingest
