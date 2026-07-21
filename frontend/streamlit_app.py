@@ -16,10 +16,10 @@ import streamlit as st
 
 API = os.environ.get("DOCINTEL_API_URL", "http://localhost:8000")
 
-st.set_page_config(page_title="Document Intelligence", page_icon="📄", layout="wide")
-st.title("📄 Document Intelligence System")
+st.set_page_config(page_title="Document Intelligence", layout="wide")
+st.title("Document Intelligence")
 st.caption(
-    "Hybrid LayoutLMv3 + Donut + rules extraction over legal & financial "
+    "Hybrid LayoutLMv3 + Donut + rules extraction over legal and financial "
     "documents, with semantic search."
 )
 
@@ -35,12 +35,12 @@ def api(method: str, path: str, **kwargs):
 
 
 def confidence_badge(conf: float) -> str:
-    color = "🟢" if conf >= 0.8 else ("🟡" if conf >= 0.55 else "🔴")
-    return f"{color} {conf:.0%}"
+    label = "high" if conf >= 0.8 else ("medium" if conf >= 0.55 else "low")
+    return f"{conf:.0%} ({label})"
 
 
 tab_upload, tab_docs, tab_query, tab_dash = st.tabs(
-    ["⬆️ Upload", "📂 Documents", "💬 Ask", "📊 Dashboard"]
+    ["Upload", "Documents", "Ask", "Dashboard"]
 )
 
 # ────────────────────────────── Upload ──────────────────────────────
@@ -125,7 +125,7 @@ with tab_docs:
                         st.table(table["rows"])
 
                 st.download_button(
-                    "⬇️ Download JSON",
+                    "Download JSON",
                     data=json.dumps(result, indent=2),
                     file_name=f"{meta['filename']}.extraction.json",
                     mime="application/json",
