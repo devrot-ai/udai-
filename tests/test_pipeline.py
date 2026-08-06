@@ -187,6 +187,98 @@ class TestHybrid:
         assert "rules" in merged["total_amount"].source
 
 
+class TestFieldShortcut:
+    """The QA layer should answer well-known intents (parties, totals,
+    dates...) from the document's already-extracted structured fields
+    rather than free-text search, which can match a sentence that merely
+    mentions the right word without actually answering the question."""
+
+    @pytest.fixture()
+    def scoped_doc(self, tmp_path, monkeypatch):
+        import json
+        import sys
+
+        monkeypatch.setenv("DOCINTEL_DATA_DIR", str(tmp_path))
+        monkeypatch.setenv("DOCINTEL_DATABASE_URL", f"sqlite:///{tmp_path}/test.db")
+        for mod in list(sys.modules):
+            if mod.startswith("backend"):
+                del sys.modules[mod]
+
+        from backend.app.database import Document, SessionLocal, init_db
+
+        init_db()
+        db = SessionLocal()
+        try:
+            doc = Document(
+                id="doc1", filename="contract.pdf", content_type="application/pdf",
+                stored_path="/tmp/x.pdf", status="completed",
+                result_json=json.dumps({"fields": {
+                    "party_1": {"value": "Meridian Software Corp", "confidence": 0.9,
+                               "source": "rules", "page": 1},
+                    "party_2": {"value": "Pinnacle Healthcare Group", "confidence": 0.9,
+                               "source": "rules", "page": 1},
+                }}),
+            )
+            db.add(doc)
+            db.commit()
+        finally:
+            db.close()
+        return "doc1"
+
+    def test_answers_from_structured_field_not_free_text(self, scoped_doc, monkeypatch):
+        from backend.app.rag import qa
+
+        # even if free-text search would return a misleading match, the
+        # field shortcut should win for a party question scoped to one doc
+        monkeypatch.setattr(
+            qa.store, "search",
+            lambda *a, **k: [{"text": "NOW, THEREFORE, the parties agree as follows:",
+                              "score": 0.9, "meta": {}}],
+        )
+        result = qa.answer("Who are the parties involved?", document_id=scoped_doc)
+        assert result["answer"] == \
+            "Party 1: Meridian Software Corp; Party 2: Pinnacle Healthcare Group"
+
+    def test_no_shortcut_without_document_scope(self, scoped_doc):
+        from backend.app.rag.qa import _field_shortcut
+
+        assert _field_shortcut("Who are the parties involved?", None) is None
+
+    def test_total_revenue_does_not_match_total_assets(self, tmp_path, monkeypatch):
+        import json
+        import sys
+
+        monkeypatch.setenv("DOCINTEL_DATA_DIR", str(tmp_path))
+        monkeypatch.setenv("DOCINTEL_DATABASE_URL", f"sqlite:///{tmp_path}/test2.db")
+        for mod in list(sys.modules):
+            if mod.startswith("backend"):
+                del sys.modules[mod]
+
+        from backend.app.database import Document, SessionLocal, init_db
+        from backend.app.rag import qa
+
+        init_db()
+        db = SessionLocal()
+        try:
+            db.add(Document(
+                id="doc2", filename="financial.pdf", content_type="application/pdf",
+                stored_path="/tmp/x.pdf", status="completed",
+                result_json=json.dumps({"fields": {
+                    "total_revenue": {"value": "$4,500,000.00", "confidence": 0.9,
+                                      "source": "rules", "page": 1},
+                    "total_assets": {"value": "$13,500,000.00", "confidence": 0.9,
+                                     "source": "rules", "page": 1},
+                }}),
+            ))
+            db.commit()
+        finally:
+            db.close()
+
+        result = qa.answer("What is the total revenue?", document_id="doc2")
+        assert "4,500,000" in result["answer"]
+        assert "13,500,000" not in result["answer"]
+
+
 class TestRagFallbackStore:
     def test_index_and_search(self, tmp_path, monkeypatch):
         from backend.app.rag import store as rag_store
@@ -212,3 +304,31 @@ class TestRagFallbackStore:
                          "written notice by either party.", "score": 0.8}]
         answer = _extractive_answer("What are the termination clauses?", hits)
         assert "terminated" in answer
+
+    def test_extractive_answer_does_not_glue_unrelated_facts(self):
+        """Regression: independently top-scoring but unrelated sentences from
+        the same tabular chunk (a total, a due date, a table header) used to
+        be concatenated into one garbled answer. Only the single strongest
+        sentence should come back."""
+        from backend.app.rag.qa import _extractive_answer
+
+        hits = [{
+            "text": "Total Due: $3,456.00\nDue Date: February 3, 2024\n"
+                    "Description Qty Unit Price Amount",
+            "score": 0.5,
+        }]
+        answer = _extractive_answer("What is the total amount due?", hits)
+        assert answer == "Total Due: $3,456.00"
+
+    def test_extractive_answer_skips_all_caps_headings(self):
+        from backend.app.rag.qa import _extractive_answer
+
+        hits = [{
+            "text": "3. TERM AND TERMINATION\nThis Agreement shall commence on "
+                    "the Effective Date. Either party may terminate upon sixty "
+                    "(60) days written notice.",
+            "score": 0.5,
+        }]
+        answer = _extractive_answer("What are the termination clauses?", hits)
+        assert "TERM AND TERMINATION" not in answer
+        assert "Either party may terminate" in answer

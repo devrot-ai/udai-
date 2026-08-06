@@ -14,5 +14,5 @@ data/*.db
 evaluation/dataset/
 .pytest_cache/
 .DS_Store
-.streamlit/
+.streamlit/secrets.toml
 models_cache/
