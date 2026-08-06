@@ -182,6 +182,16 @@ def confidence_pill(conf: float) -> str:
     return f'<span class="pill {cls}">{conf:.0%}</span>'
 
 
+def suggested_question(doc_type: str) -> str:
+    return {
+        "invoice": "What is the total amount due?",
+        "receipt": "What is the total amount due?",
+        "contract": "What are the termination clauses?",
+        "financial_statement": "What is the total revenue?",
+        "court_document": "Who are the parties involved?",
+    }.get(doc_type, "What are the key details in this document?")
+
+
 def goto(page: str, **prefill) -> None:
     """Programmatic navigation — used by 'Ask about this document' style
     call-to-actions to jump pages with context pre-filled."""
@@ -347,15 +357,9 @@ def render_result(doc_id: str, meta: dict, show_ask_cta: bool = True) -> None:
     if show_ask_cta:
         st.markdown('<div class="cta-row"><div class="cta-label">Have a question about '
                      'this document?</div></div>', unsafe_allow_html=True)
-        suggestions = {
-            "invoice": "What is the total amount due?",
-            "receipt": "What is the total amount due?",
-            "contract": "What are the termination clauses?",
-            "financial_statement": "What is the total revenue?",
-            "court_document": "Who are the parties involved?",
-        }.get(result["document_type"], "What are the key details in this document?")
-        if st.button(f'Ask: "{suggestions}"', key=f"ask_cta_{doc_id}"):
-            goto("Ask", ask_scope_select=meta["filename"], ask_question_input=suggestions)
+        suggestion = suggested_question(result["document_type"])
+        if st.button(f'Ask: "{suggestion}"', key=f"ask_cta_{doc_id}"):
+            goto("Ask", ask_scope_select=meta["filename"], ask_question_input=suggestion)
 
 
 # ─────────────────────────────── navigation ───────────────────────────────
@@ -432,8 +436,7 @@ if page == "Upload":
     if uploaded and st.button("Process document", type="primary"):
         result = process_and_store(uploaded.name, uploaded.getvalue())
         if result:
-            st.session_state["last_uploaded_doc"] = result["id"]
-            st.rerun()
+            st.session_state["just_processed"] = (result["id"], uploaded.name)
 
     if not uploaded:
         st.markdown("**Don't have a document handy? Try a sample:**")
@@ -454,18 +457,24 @@ if page == "Upload":
                         file_bytes = (SAMPLES_DIR / sample["file"]).read_bytes()
                         result = process_and_store(sample["file"], file_bytes)
                         if result:
-                            st.session_state["last_uploaded_doc"] = result["id"]
-                            st.rerun()
+                            st.session_state["just_processed"] = (result["id"], sample["file"])
 
-    # Persistent (not a one-shot button return value) so the result view —
-    # and any buttons inside it, like "Ask about this document" — keeps
-    # rendering and stays interactive across later reruns.
-    if st.session_state.get("last_uploaded_doc"):
-        doc_id = st.session_state["last_uploaded_doc"]
-        docs = api("GET", "/api/documents").json()
-        meta = next((d for d in docs if d["id"] == doc_id), None)
-        if meta and meta["status"] == "completed":
-            render_result(doc_id, meta)
+    just_processed = st.session_state.get("just_processed")
+    if just_processed:
+        doc_id, filename = just_processed
+        status = api("GET", f"/api/documents/{doc_id}").json()
+        if status["status"] == "completed":
+            st.success(
+                f"Detected **{humanize(status['doc_type'])}** "
+                f"({status['doc_type_confidence']:.0%} confidence) "
+                f"in {status['processing_seconds']}s."
+            )
+            suggestion = suggested_question(status["doc_type"])
+            b1, b2 = st.columns(2)
+            if b1.button("View the extraction →", type="primary", key=f"view_{doc_id}"):
+                goto("Review")
+            if b2.button(f'Ask: "{suggestion}"', key=f"ask_upload_cta_{doc_id}"):
+                goto("Ask", ask_scope_select=filename, ask_question_input=suggestion)
 
 # ───────────────────────────── Review ─────────────────────────────
 elif page == "Review":
