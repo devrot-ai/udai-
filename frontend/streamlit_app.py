@@ -135,7 +135,7 @@ with tab_docs:
                     }
                     for name, f in sorted(result["fields"].items())
                 ]
-                st.dataframe(rows, use_container_width=True, hide_index=True)
+                st.dataframe(rows, width="stretch", hide_index=True)
 
                 if result.get("tables"):
                     st.subheader("Tables")
@@ -170,7 +170,7 @@ with tab_docs:
                             draw.rectangle(box, outline=(220, 60, 60), width=3)
                             draw.text((box[0], max(box[1] - 16, 0)), name,
                                       fill=(220, 60, 60))
-                    st.image(image, use_container_width=True)
+                    st.image(image, width="stretch")
                 else:
                     st.info("Page preview unavailable.")
 
@@ -233,5 +233,5 @@ with tab_dash:
              "Seconds": d.get("processing_seconds") or "—"}
             for d in stats["recent"]
         ],
-        use_container_width=True, hide_index=True,
+        width="stretch", hide_index=True,
     )

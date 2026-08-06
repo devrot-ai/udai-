@@ -1,8 +1,16 @@
 # Document Intelligence
 
+**Live demo:** https://document-intelligence-abhati27.streamlit.app
+
 A multi-modal document understanding system that pulls structured data out of
 legal and financial paperwork: contracts, invoices, financial statements, and
 court filings, from both native PDFs and scans.
+
+The hosted demo runs the lite path standalone (no separate backend process —
+see [Running it](#running-it) and `frontend/embedded.py`): trained classifier,
+rules and layout extraction, table extraction, and TF-IDF semantic search. It's
+a single free-tier instance, so it can take a few seconds to wake up if it's
+been idle, and stored documents reset on redeploy.
 
 The core idea is that no single model should be trusted blindly on documents
 where a wrong number has real consequences. So instead of one big model, the
@@ -121,6 +129,12 @@ uvicorn backend.app.main:app --reload        # API on :8000
 streamlit run frontend/streamlit_app.py      # UI on :8501
 ```
 
+The frontend also works with no backend running at all: if it can't reach the
+API it falls back to `frontend/embedded.py`, which calls the same pipeline
+in-process. That's what the hosted demo runs on Streamlit Community Cloud —
+`pip install -r frontend/requirements.txt && streamlit run frontend/streamlit_app.py`
+is the whole deployment.
+
 ### Full ML pipeline
 
 Adds LayoutLMv3, Donut, Tesseract + spaCy, and ChromaDB with
@@ -216,6 +230,7 @@ backend/app/
     store.py                  ChromaDB (with TF-IDF fallback) + chunking
     qa.py                     extractive / LLM answer synthesis
 frontend/streamlit_app.py     upload, results + overlay, ask, dashboard
+frontend/embedded.py          in-process backend for standalone deployment
 training/train_classifier.py  corpus generator + TF-IDF/LogReg training
 models/                       doc_classifier.joblib + metrics
 evaluation/
