@@ -58,7 +58,7 @@
       }
     },
     "improvement_pp": 50.7,
-    "elapsed_seconds": 2.7
+    "elapsed_seconds": 3.6
   },
   "per_document": [
     {
@@ -1083,7 +1083,7 @@
         },
         "plaintiff": {
           "expected": "John Martinez",
-          "hybrid": "OF CALIFORNIA\nJOHN MARTINEZ",
+          "hybrid": "JOHN MARTINEZ",
           "hybrid_correct": true,
           "baseline": "DISTRICT OF CALIFORNIA",
           "baseline_correct": false
@@ -1118,7 +1118,7 @@
         },
         "plaintiff": {
           "expected": "Sarah Chen",
-          "hybrid": "NEW YORK\nSARAH CHEN",
+          "hybrid": "SARAH CHEN",
           "hybrid_correct": true,
           "baseline": "DISTRICT OF NEW YORK",
           "baseline_correct": false
@@ -1153,7 +1153,7 @@
         },
         "plaintiff": {
           "expected": "David Okafor",
-          "hybrid": "OF WASHINGTON\nDAVID OKAFOR",
+          "hybrid": "DAVID OKAFOR",
           "hybrid_correct": true,
           "baseline": "DAVID OKAFOR,",
           "baseline_correct": true
@@ -1188,7 +1188,7 @@
         },
         "plaintiff": {
           "expected": "Emily Rousseau",
-          "hybrid": "OF CALIFORNIA\nEMILY ROUSSEAU",
+          "hybrid": "EMILY ROUSSEAU",
           "hybrid_correct": true,
           "baseline": "DISTRICT OF CALIFORNIA",
           "baseline_correct": false
@@ -1223,7 +1223,7 @@
         },
         "plaintiff": {
           "expected": "Michael Tanaka",
-          "hybrid": "NEW YORK\nMICHAEL TANAKA",
+          "hybrid": "MICHAEL TANAKA",
           "hybrid_correct": true,
           "baseline": "DISTRICT OF NEW YORK",
           "baseline_correct": false
@@ -1258,7 +1258,7 @@
         },
         "plaintiff": {
           "expected": "Laura Whitfield",
-          "hybrid": "OF WASHINGTON\nLAURA WHITFIELD",
+          "hybrid": "LAURA WHITFIELD",
           "hybrid_correct": true,
           "baseline": "LAURA WHITFIELD,",
           "baseline_correct": true

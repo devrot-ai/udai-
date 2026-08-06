@@ -44,6 +44,13 @@ def _field(name: str, value: str, conf: float) -> ExtractedField:
                           confidence=conf, source="rules")
 
 
+def _strip_party_prefix(v: str) -> str:
+    """Drop a leading 'v.'/'vs.'/'versus' that a caption line (e.g. "v. REDWOOD
+    RETAIL CORP") can pull into a plaintiff/defendant match when it shares a
+    text line with the party name."""
+    return re.sub(r"^(?:v\.?|vs\.?|versus)\s+", "", v.strip(), flags=re.IGNORECASE)
+
+
 # ─────────────────────────── per-type extractors ───────────────────────────
 
 def _extract_invoice(text: str) -> List[ExtractedField]:
@@ -176,26 +183,27 @@ def _extract_court(text: str) -> List[ExtractedField]:
     if m:
         out.append(_field("case_number", m.group(1), 0.95))
 
-    m = _search([r"((?:UNITED STATES DISTRICT COURT|SUPERIOR COURT|SUPREME COURT|CIRCUIT COURT|COURT OF APPEALS)[^\n]{0,60})"],
+    m = _search([r"((?:UNITED STATES DISTRICT COURT|SUPERIOR COURT|SUPREME COURT|CIRCUIT COURT|COURT OF APPEALS)"
+                 r"[^\n]{0,60}(?:\n\s*DISTRICT OF [^\n]{0,40})?)"],
                 text, flags=0)
     if m:
         out.append(_field("court_name", re.sub(r"\s+", " ", m.group(1)), 0.9))
 
-    m = re.search(rf"({COMPANY}|{NAME_LINE})\s*,?\s*\n?\s*Plaintiffs?", text, re.IGNORECASE)
+    m = re.search(rf"(?:^|\n)\s*({COMPANY}|{NAME_LINE})\s*,?\s*\n?\s*Plaintiffs?", text, re.IGNORECASE)
     if m:
-        out.append(_field("plaintiff", m.group(1), 0.88))
+        out.append(_field("plaintiff", _strip_party_prefix(m.group(1)), 0.88))
     else:
         m = re.search(rf"Plaintiffs?\s*[:,\-]?\s*({COMPANY}|{NAME_LINE})", text, re.IGNORECASE)
         if m:
-            out.append(_field("plaintiff", m.group(1), 0.8))
+            out.append(_field("plaintiff", _strip_party_prefix(m.group(1)), 0.8))
 
-    m = re.search(rf"({COMPANY}|{NAME_LINE})\s*,?\s*\n?\s*Defendants?", text, re.IGNORECASE)
+    m = re.search(rf"(?:^|\n)\s*({COMPANY}|{NAME_LINE})\s*,?\s*\n?\s*Defendants?", text, re.IGNORECASE)
     if m:
-        out.append(_field("defendant", m.group(1), 0.88))
+        out.append(_field("defendant", _strip_party_prefix(m.group(1)), 0.88))
     else:
         m = re.search(rf"Defendants?\s*[:,\-]?\s*({COMPANY}|{NAME_LINE})", text, re.IGNORECASE)
         if m:
-            out.append(_field("defendant", m.group(1), 0.8))
+            out.append(_field("defendant", _strip_party_prefix(m.group(1)), 0.8))
 
     m = _search([rf"filed\s*(?:on)?\s*[:\-]?\s*({DATE})", rf"date\s*filed\s*[:\-]?\s*({DATE})",
                  rf"dated\s*[:\-]?\s*({DATE})"], text)
