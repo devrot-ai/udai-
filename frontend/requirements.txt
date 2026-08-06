@@ -1,0 +1,16 @@
+# Requirements for standalone deployment (e.g. Streamlit Community Cloud),
+# where the app runs without a separate FastAPI process — see embedded.py.
+# Mirrors requirements-lite.txt at the repo root; kept separate because
+# Streamlit Cloud looks for requirements.txt next to the app's entrypoint.
+streamlit>=1.33
+fastapi>=0.110
+sqlalchemy>=2.0
+pydantic>=2.6
+pydantic-settings>=2.2
+scikit-learn>=1.4
+joblib>=1.3
+pdfplumber>=0.11
+pypdfium2>=4.28
+pillow>=10.2
+numpy>=1.26
+requests>=2.31

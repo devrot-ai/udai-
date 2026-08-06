@@ -1,6 +1,9 @@
 """Document Intelligence — Streamlit frontend.
 
-Run the API first (uvicorn backend.app.main:app), then:
+Talks to the FastAPI backend over HTTP when one is reachable (local dev,
+Docker). If it isn't — e.g. running standalone on Streamlit Community
+Cloud — it transparently falls back to embedded.py, which runs the same
+pipeline in-process. Either way:
     streamlit run frontend/streamlit_app.py
 """
 
@@ -14,6 +17,8 @@ import time
 import requests
 import streamlit as st
 
+import embedded
+
 API = os.environ.get("DOCINTEL_API_URL", "http://localhost:8000")
 
 st.set_page_config(page_title="Document Intelligence", layout="wide")
@@ -23,15 +28,29 @@ st.caption(
     "documents, with semantic search."
 )
 
+if "embedded_mode" not in st.session_state:
+    try:
+        requests.get(f"{API}/health", timeout=2)
+        st.session_state["embedded_mode"] = False
+    except requests.exceptions.RequestException:
+        st.session_state["embedded_mode"] = True
+
+if st.session_state["embedded_mode"]:
+    st.caption(
+        "Running standalone (no separate API process) — extraction runs "
+        "in-process on upload instead of as a background job."
+    )
+
 
 def api(method: str, path: str, **kwargs):
+    if st.session_state["embedded_mode"]:
+        return embedded.dispatch(method, path, **kwargs)
     try:
         r = requests.request(method, f"{API}{path}", timeout=120, **kwargs)
         return r
-    except requests.ConnectionError:
-        st.error(f"Cannot reach the API at {API}. Start it with: "
-                 "`uvicorn backend.app.main:app`")
-        st.stop()
+    except requests.exceptions.RequestException:
+        st.session_state["embedded_mode"] = True
+        return embedded.dispatch(method, path, **kwargs)
 
 
 def confidence_badge(conf: float) -> str:
