@@ -1,0 +1,22 @@
+[
+  {
+    "file": "sample_invoice.pdf",
+    "label": "Invoice",
+    "description": "A vendor invoice with line items, tax, and a total due."
+  },
+  {
+    "file": "sample_contract.pdf",
+    "label": "Contract",
+    "description": "A services agreement with parties, term, and governing law."
+  },
+  {
+    "file": "sample_financial_statement.pdf",
+    "label": "Financial statement",
+    "description": "An income statement and balance sheet with GAAP figures."
+  },
+  {
+    "file": "sample_court_filing.pdf",
+    "label": "Court filing",
+    "description": "A civil complaint with case number, plaintiff, and defendant."
+  }
+]

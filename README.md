@@ -48,7 +48,9 @@ it, and a bounding box so you can see exactly where on the page it came from.
 
 There's a FastAPI backend (async upload, background processing, query, and
 dashboard endpoints, all documented at `/docs`), a Streamlit frontend, and a
-Docker setup for both a lite and a full-ML image.
+Docker setup for both a lite and a full-ML image. Four sample documents
+(`frontend/samples/`) ship with the app so you can try it without having a
+contract or invoice on hand.
 
 ## Results
 
@@ -230,6 +232,7 @@ backend/app/
     store.py                  ChromaDB (with TF-IDF fallback) + chunking
     qa.py                     extractive / LLM answer synthesis
 frontend/streamlit_app.py     upload, results + overlay, ask, dashboard
+frontend/samples/              one sample invoice, contract, statement, filing
 frontend/embedded.py          in-process backend for standalone deployment
 training/train_classifier.py  corpus generator + TF-IDF/LogReg training
 models/                       doc_classifier.joblib + metrics
