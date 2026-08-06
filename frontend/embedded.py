@@ -248,9 +248,7 @@ def _dashboard_stats() -> FakeResponse:
         db.close()
 
 
-def dispatch(method: str, path: str, **kwargs) -> FakeResponse:
-    """Route an api(method, path, **kwargs) call to a local handler."""
-    method = method.upper()
+def _route(method: str, path: str, **kwargs) -> FakeResponse:
     parts = [p for p in path.split("/") if p]  # ["api", "documents", ...]
 
     if method == "POST" and path == "/api/documents/upload":
@@ -271,3 +269,19 @@ def dispatch(method: str, path: str, **kwargs) -> FakeResponse:
         return _dashboard_stats()
 
     return FakeResponse(404, {"detail": f"Unhandled embedded route: {method} {path}"})
+
+
+def dispatch(method: str, path: str, **kwargs) -> FakeResponse:
+    """Route an api(method, path, **kwargs) call to a local handler.
+
+    Any unexpected exception (e.g. a filesystem permission issue on a
+    hosting platform, a corrupt row) becomes a visible 500 response instead
+    of an uncaught exception — a failure should be diagnosable from the UI,
+    never a silent blank screen.
+    """
+    method = method.upper()
+    try:
+        return _route(method, path, **kwargs)
+    except Exception as exc:
+        logger.exception("embedded dispatch failed: %s %s", method, path)
+        return FakeResponse(500, {"detail": f"{type(exc).__name__}: {exc}"})
