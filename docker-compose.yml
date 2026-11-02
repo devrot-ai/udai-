@@ -18,19 +18,5 @@ services:
       timeout: 5s
       retries: 5
 
-  frontend:
-    build:
-      context: .
-      args:
-        FULL: "0"
-    command: streamlit run frontend/streamlit_app.py --server.port 8501 --server.address 0.0.0.0
-    ports:
-      - "8501:8501"
-    environment:
-      - DOCINTEL_API_URL=http://api:8000
-    depends_on:
-      api:
-        condition: service_healthy
-
 volumes:
   docintel-data:
